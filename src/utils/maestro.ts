@@ -1,6 +1,7 @@
 import {
   Asset,
   Configuration,
+  ConfigurationParameters,
   MaestroClient,
 } from "@maestro-org/typescript-sdk";
 import { AxiosInstance } from "axios";
@@ -13,15 +14,16 @@ export function sleep(ms: number): Promise<void> {
 }
 
 export function getMaestroClient(options: FetcherOptions): MaestroClient {
-  return new MaestroClient(
-    new Configuration({
-      apiKey: process.env["MAESTRO_API_KEY"] ?? "",
-      network: process.env["NETWORK"] === "Preprod" ? "Preprod" : "Mainnet",
-      baseOptions: {
-        timeout: options.timeout,
-      },
-    })
-  );
+  const config: ConfigurationParameters = {
+    apiKey: process.env["MAESTRO_API_KEY"] ?? "",
+    baseUrl: process.env["MAESTRO_BASE_URL"] ?? undefined,
+    network: process.env["NETWORK"] === "Preprod" ? "Preprod" : "Mainnet",
+    baseOptions: {
+      timeout: options.timeout,
+    },
+  };
+
+  return new MaestroClient(new Configuration(config));
 }
 
 export class MaestroIndexer implements BlockchainIndexer {
